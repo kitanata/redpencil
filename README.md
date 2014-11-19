@@ -8,7 +8,7 @@ We provide a shopping portal, where dealers can offer their goods (similiar to A
 The scope of the Code Kata is the implementations of the rules for activation and end of red pencil promotions.
 
 * [X] 1. To avoid misuse of red pencil promotions the red pencil promotions are activated and deactivated automatically.
-* [] 2. A red pencil promotion starts due to a price reduction. 
+* [X] 2. A red pencil promotion starts due to a price reduction. 
 * [X] 3. The price has to be reduced by at least 5%...
 * [X] 4. ...but at most by 30%...
 * [X] 5. ...and the previous price had to be stable for at least 30 days.

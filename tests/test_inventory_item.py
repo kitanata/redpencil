@@ -23,6 +23,9 @@ class TestInventoryItem(unittest.TestCase):
     def test_it_should_have_a_day_counter_since_last_price_changed(self):
         self.subject._days_since_last_price_changed.should.equal(0)
 
+    def test_it_should_start_in_a_non_promotional_state(self):
+        self.subject._promotion_active.should.equal(False)
+
     def test_it_should_let_us_set_price_and_duration_on_init(self):
         self.other_subject = InventoryItem(25, 30)
         self.other_subject._price.should.equal(25)
@@ -90,8 +93,16 @@ class TestInventoryItemPriceChange(unittest.TestCase):
         self.subject.set_price(99)
         self.subject.in_promotion().should.equal(False)
 
-    def test_it_should_enter_promition_when_price_reamined_stable_for_31_days(self):
+    def test_it_should_enter_promotion_when_price_reamined_stable_for_31_days(self):
         self.subject = InventoryItem(100, 31)
         self.subject.set_price(95)
         self.subject.in_promotion().should.equal(True)
+
+    def test_it_should_enter_promotion_when_price_is_reduced(self):
+        self.subject.set_price(95)
+        self.subject._promotion_active.should.equal(True)
+
+    def test_is_should_not_enter_promotion_when_price_is_raised(self):
+        self.subject.set_price(150)
+        self.subject.in_promotion().should.equal(False)
 
