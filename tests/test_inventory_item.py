@@ -35,16 +35,16 @@ class TestInventoryItem(unittest.TestCase):
 class TestInventoryItemPriceChange(unittest.TestCase):
 
     def setUp(self):
-        self.subject = InventoryItem(25, 30)
+        self.subject = InventoryItem(100, 30)
 
     def test_it_should_update_price_changed_when_price_is_set(self):
-        self.subject.set_price(20)
+        self.subject.set_price(50)
         self.subject._days_since_price_changed.should.equal(0)
 
     def test_it_should_know_its_last_price_when_changed(self):
-        self.subject.set_price(20)
-        self.subject._last_price.should.equal(25)
+        self.subject.set_price(50)
+        self.subject._last_price.should.equal(100)
 
     def test_it_should_enter_promotion_when_price_drops_5_percent_or_more(self):
-        self.subject.set_price(20)
+        self.subject.set_price(94)
         self.subject.in_promotion().should.equal(True)
