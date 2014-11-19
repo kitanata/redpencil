@@ -1,6 +1,8 @@
 Red Pencil Code Kata
 ====================
 
+Inspired From: [Stefen Roock](http://stefanroock.wordpress.com/2011/03/04/red-pencil-code-kata/)
+
 1. We provide a shopping portal, where dealers can offer their goods (similiar to Amazon market place). We want to support red pencil promotions for reduced prices. During the red pencil promotion the old price is crossed out in red and the new reduced price is written next to it.
 2. To avoid misuse of red pencil promotions the red pencil promotions are activated and deactivated automatically.
 3. The scope of the Code Kata is the implementations of the rules for activation and end of red pencil promotions.
