@@ -14,6 +14,9 @@ class TestInventoryItem(unittest.TestCase):
     def test_it_should_have_a_last_price(self):
         self.subject._last_price.should.equal(0)
 
+    def test_it_should_not_be_in_promotion(self):
+        self.subject.in_promotion().should.equal(False)
+
     def test_it_should_have_a_day_counter_since_price_changed(self):
         self.subject._days_since_price_changed.should.equal(0)
 
@@ -36,3 +39,7 @@ class TestInventoryItem(unittest.TestCase):
         self.subject = InventoryItem(25, 30)
         self.subject.set_price(20)
         self.subject._last_price.should.equal(25)
+
+    def test_it_should_let_us_start_a_promotion(self):
+        self.subject.start_promotion()
+        self.subject.in_promotion().should.equal(True)

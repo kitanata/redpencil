@@ -6,6 +6,10 @@ class Inventory:
         self._items = []
 
     def check_for_promotions(self):
+        for item in self._items:
+            if 1 - (item._price / item._last_price) > 0.05:
+                item.start_promotion()
+
         return True
 
     def add_item(self, item):
