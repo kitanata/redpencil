@@ -9,4 +9,8 @@ class TestInventoryItem(unittest.TestCase):
         self.subject = InventoryItem()
 
     def test_it_should_have_a_normal_price(self):
-        self.subject.price.should.equal(0)
+        self.subject._price.should.equal(0)
+
+    def test_it_should_have_a_day_counter_since_price_changed(self):
+        self.subject._days_since_price_changed.should.equal(0)
+

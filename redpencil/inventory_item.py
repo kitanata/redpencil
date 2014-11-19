@@ -1,5 +1,5 @@
 class InventoryItem:
-    pass
 
     def __init__(self):
-        self.price = 0
+        self._price = 0
+        self._days_since_price_changed = 0
