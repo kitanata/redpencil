@@ -40,6 +40,9 @@ class InventoryItem:
 
 
     def price_drop_ratio(self, old_price, new_price):
+        if old_price == 0:
+            return 1
+
         return round(1 - (new_price / old_price), 2)
 
 
@@ -53,9 +56,6 @@ class InventoryItem:
 
 
     def should_start_promotion(self, old_price, new_price, days_last_changed):
-        if old_price == 0:
-            return False
-
         if self.check_promotion_is_over():
             return False
 
