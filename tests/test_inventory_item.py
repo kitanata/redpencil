@@ -115,3 +115,9 @@ class TestInventoryItemPriceChange(unittest.TestCase):
         self.subject.set_price(85)
         self.subject._promotion_active.should.be(False)
 
+    def test_it_should_end_the_promotion_if_the_price_raises_any_amount(self):
+        self.subject.set_price(90)
+        self.subject.in_promotion().should.be(True) #Sanity Check
+        self.subject.set_price(95)
+        self.subject.in_promotion().should.be(False)
+

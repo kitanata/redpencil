@@ -14,7 +14,7 @@ The scope of the Code Kata is the implementations of the rules for activation an
 * [X] 5. ...and the previous price had to be stable for at least 30 days.
 * [X] 6. A red pencil promotion lasts 30 days as the maximum length.
 * [X] 7. If the price is further reduced during the red pencil promotion the promotion will not be prolonged by that reduction.
-* [] 8. If the price is increased during the red pencil promotion the promotion will be ended immediately.
+* [X] 8. If the price is increased during the red pencil promotion the promotion will be ended immediately.
 * [] 9. If the price if reduced during the red pencil promotion so that the overall reduction is more than 30% with regard to the original price, the promotion is ended immediately.
 * [] 10. After a red pencil promotion is ended additional red pencil promotions may follow – as long as the start condition is valid: the price was stable for 30 days and these 30 days don’t intersect with a previous red pencil promotion.
 
@@ -23,5 +23,5 @@ Installation
 
 The code is written in Python 3.4.
 
-Install with pip3. `pip3 install -r requirements.txt`
-Run the tests. `nosetests`
+* Install with pip3. `pip3 install -r requirements.txt`
+* Run the tests. `nosetests`
