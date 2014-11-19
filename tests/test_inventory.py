@@ -1,7 +1,7 @@
 import sure
 import unittest
 
-from redpencil import Inventory
+from redpencil import Inventory, InventoryItem
 
 class TestInventory(unittest.TestCase):
 
@@ -10,4 +10,16 @@ class TestInventory(unittest.TestCase):
 
     def test_it_should_have_a_list_of_inventory(self):
         self.subject._items.should.equal([])
+
+    def test_it_should_check_for_promotions(self):
+        self.subject.check_for_promotions().should.equal(True)
+
+    def test_it_should_let_us_add_new_items(self):
+        self.subject.add_item(InventoryItem(25, 30))
+
+    def test_it_should_not_let_us_specify_invalid_items(self):
+        self.subject.add_item.when.called_with([]).should.throw(ValueError)
+        self.subject.add_item.when.called_with("").should.throw(ValueError)
+        self.subject.add_item.when.called_with(5).should.throw(ValueError)
+        self.subject.add_item.when.called_with({}).should.throw(ValueError)
 
