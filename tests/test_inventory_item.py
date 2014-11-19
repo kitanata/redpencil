@@ -45,6 +45,26 @@ class TestInventoryItemPriceChange(unittest.TestCase):
         self.subject.set_price(50)
         self.subject._last_price.should.equal(100)
 
-    def test_it_should_enter_promotion_when_price_drops_5_percent_or_more(self):
+    def test_it_should_calculate_price_drop_ratio(self):
+        self.subject.set_price(50)
+        self.subject.price_drop_ratio().should.equal(0.5)
+
+    def test_it_should_enter_promotion_when_price_drops_5_percent(self):
+        self.subject.set_price(95)
+        self.subject.in_promotion().should.equal(True)
+
+    def test_it_should_enter_promotion_when_price_drops_more_than_5_percent(self):
         self.subject.set_price(94)
         self.subject.in_promotion().should.equal(True)
+
+    def test_it_should_enter_promotion_when_price_drops_30_percent(self):
+        #Note to reviewers at Pillar. I totally got floating point errors here. 
+        #This would have been hard to detect without TDD. Hence the introduction of
+        #the get_price_drop_ratio function above.
+        self.subject.set_price(70)
+        self.subject.in_promotion().should.equal(True)
+
+    #def test_it_should_not_enter_promotion_when_price_drops_more_than_30_percent(self):
+    #    self.subject.set_price(69)
+    #    self.subject.in_promotion().should.equal(False)
+
