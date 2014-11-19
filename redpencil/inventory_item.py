@@ -8,6 +8,7 @@ class InventoryItem:
         self._days_promotion_active = 0
 
         self._last_price_changed_on = last_price_changed_on
+        self._promotion_started_on = None
 
         if not self._last_price_changed_on: 
             self._last_price_changed_on = datetime.now()
@@ -18,17 +19,23 @@ class InventoryItem:
 
 
     def set_price(self, price):
-        self._promotion_active = self.check_promotion(
+        should_start_promotion = self.check_promotion(
             self._price, 
             price,
             self.days_since_price_changed()
         )
+
+        if should_start_promotion:    
+            self._promotion_active = True
+            self._promotion_started_on = datetime.now()
 
         self._price = price
         self._last_price_changed_on = datetime.now()
 
 
     def in_promotion(self):
+        self.check_promotion_is_over()
+
         return self._promotion_active
 
 
@@ -36,8 +43,20 @@ class InventoryItem:
         return round(1 - (new_price / old_price), 2)
 
 
+    def check_promotion_is_over(self):
+        if not self._promotion_active:
+            return False
+
+        if (datetime.now() - self._promotion_started_on).days > 30:
+            self._promotion_active = False
+            return True
+
+
     def check_promotion(self, old_price, new_price, days_last_changed):
         if old_price == 0:
+            return False
+
+        if self.check_promotion_is_over():
             return False
 
         if days_last_changed < 30:

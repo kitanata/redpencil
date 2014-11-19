@@ -2,6 +2,7 @@ import sure
 import unittest
 
 from datetime import datetime, timedelta
+from time import sleep
 
 from redpencil import InventoryItem
 
@@ -18,10 +19,11 @@ class TestInventoryItem(unittest.TestCase):
 
     def test_it_should_set_a_default_last_price_changed_on(self):
         self.subject._last_price_changed_on.should_not.be.none
+        self.subject._last_price_changed_on.date().should.equal(datetime.now().date())
 
     def test_it_should_start_in_a_non_promotional_state(self):
         self.subject._promotion_active.should.equal(False)
-        self.subject._days_promotion_active.should.equal(0)
+        self.subject._promotion_started_on.should.be.none
 
     def test_it_should_let_us_set_a_new_price(self):
         self.subject.set_price(25)
@@ -88,7 +90,28 @@ class TestInventoryItemPriceChange(unittest.TestCase):
         self.subject.set_price(95)
         self.subject._promotion_active.should.equal(True)
 
-    def test_is_should_not_enter_promotion_when_price_is_raised(self):
+    def test_it_should_not_enter_promotion_when_price_is_raised(self):
         self.subject.set_price(150)
         self.subject.in_promotion().should.equal(False)
+
+    def test_it_should_set_date_promotion_started_when_a_promotion_starts(self):
+        self.subject.set_price(90)
+        self.subject._promotion_started_on.date().should.equal(datetime.now().date())
+
+    def test_it_should_not_set_date_promotion_started_if_already_active(self):
+        self.subject.set_price(90)
+        sleep(1)
+        self.subject.set_price(85)
+        (datetime.now() - self.subject._promotion_started_on).seconds.should.be.greater_than(0)
+
+    def test_it_should_end_the_promotion_if_its_been_active_for_longer_than_30_days(self):
+        self.subject.set_price(90)
+        self.subject._promotion_started_on = self.subject._promotion_started_on - timedelta(days=31)
+        self.subject.in_promotion().should.be(False)
+
+    def test_it_should_end_the_promotion_if_its_been_active_for_longer_than_30_days_and_we_set_a_new_price(self):
+        self.subject.set_price(90)
+        self.subject._promotion_started_on = self.subject._promotion_started_on - timedelta(days=31)
+        self.subject.set_price(85)
+        self.subject._promotion_active.should.be(False)
 
