@@ -11,8 +11,9 @@ class InventoryItem:
         self._price = price
         self._days_since_price_changed = 0
 
-    def start_promotion(self):
-        self._in_promotion = True
-
     def in_promotion(self):
-        return self._in_promotion
+        if self._last_price == 0:
+            return False
+
+        if 1 - (self._price / self._last_price) > 0.05:
+            return True

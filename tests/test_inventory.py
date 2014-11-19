@@ -22,10 +22,3 @@ class TestInventory(unittest.TestCase):
         self.subject.add_item.when.called_with("").should.throw(ValueError)
         self.subject.add_item.when.called_with(5).should.throw(ValueError)
         self.subject.add_item.when.called_with({}).should.throw(ValueError)
-
-    def test_it_should_create_a_promotion_if_the_price_drops_5_percent_or_more(self):
-        item = InventoryItem(25, 30)
-        self.subject.add_item(item)
-        item.set_price(23)
-        self.subject.check_for_promotions()
-        item.in_promotion().should.equal(True)
