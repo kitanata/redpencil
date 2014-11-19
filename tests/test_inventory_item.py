@@ -49,6 +49,10 @@ class TestInventoryItemPriceChange(unittest.TestCase):
         self.subject.set_price(50)
         self.subject.price_drop_ratio().should.equal(0.5)
 
+    def test_it_should_not_enter_promotion_when_price_drops_less_than_5_percent(self):
+        self.subject.set_price(96)
+        self.subject.in_promotion().should.equal(False)
+
     def test_it_should_enter_promotion_when_price_drops_5_percent(self):
         self.subject.set_price(95)
         self.subject.in_promotion().should.equal(True)
@@ -64,7 +68,7 @@ class TestInventoryItemPriceChange(unittest.TestCase):
         self.subject.set_price(70)
         self.subject.in_promotion().should.equal(True)
 
-    #def test_it_should_not_enter_promotion_when_price_drops_more_than_30_percent(self):
-    #    self.subject.set_price(69)
-    #    self.subject.in_promotion().should.equal(False)
+    def test_it_should_not_enter_promotion_when_price_drops_more_than_30_percent(self):
+        self.subject.set_price(69)
+        self.subject.in_promotion().should.equal(False)
 
