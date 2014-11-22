@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 class InventoryItem:
 
@@ -10,19 +10,20 @@ class InventoryItem:
 
         self._last_price_changed_on = last_price_changed_on
         self._promotion_started_on = None
+        self._promotion_ended_on = None
 
         if not self._last_price_changed_on: 
             self._last_price_changed_on = datetime.now()
 
 
-    def days_since_price_changed(self):
-        return (datetime.now() - self._last_price_changed_on).days
-
-
     def set_reduced_price(self, price):
+        if self.has_promotion_expired():
+            self._promotion_active = False
+            self._promotion_ended_on = self._promotion_started_on + timedelta(days=30)
         if self.should_end_promotion(price, self._reduced_price):
             self._promotion_active = False
-        elif self.should_start_promotion(price, self.days_since_price_changed()):
+            self._promotion_ended_on = datetime.now()
+        elif self.should_start_promotion(price):
             self._promotion_active = True
             self._promotion_started_on = datetime.now()
 
@@ -34,6 +35,7 @@ class InventoryItem:
     def in_promotion(self):
         if self.has_promotion_expired():
             self._promotion_active = False
+            self._promotion_ended_on = self._promotion_started_on + timedelta(days=30)
 
         return self._promotion_active
 
@@ -56,9 +58,6 @@ class InventoryItem:
 
 
     def should_end_promotion(self, new_reduced_price, old_reduced_price):
-        if self.has_promotion_expired():
-            return True
-
         if not self._promotion_active:
             return False
 
@@ -74,8 +73,12 @@ class InventoryItem:
         return False
 
 
-    def should_start_promotion(self, new_reduced_price, days_last_changed):
-        if days_last_changed < 30:
+    def should_start_promotion(self, new_reduced_price):
+        if (datetime.now() - self._last_price_changed_on).days < 30:
+            return False
+
+        if self._promotion_ended_on and (
+            datetime.now() - self._promotion_ended_on).days < 30:
             return False
 
         clearance_percentage = self.get_clearance_percentage(new_reduced_price)
