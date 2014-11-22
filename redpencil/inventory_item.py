@@ -2,8 +2,9 @@ from datetime import datetime
 
 class InventoryItem:
 
-    def __init__(self, price=0, last_price_changed_on=None):
-        self._price = price
+    def __init__(self, original_price=0, last_price_changed_on=None):
+        self._original_price = original_price
+        self._reduced_price = original_price
         self._promotion_active = False
         self._days_promotion_active = 0
 
@@ -18,55 +19,59 @@ class InventoryItem:
         return (datetime.now() - self._last_price_changed_on).days
 
 
-    def set_price(self, price):
-        should_start_promotion = self.should_start_promotion(
-            self._price, 
-            price,
-            self.days_since_price_changed()
-        )
-
-        if should_start_promotion:    
+    def set_reduced_price(self, price):
+        if self.should_end_promotion(price, self._reduced_price):
+            self._promotion_active = False
+        elif self.should_start_promotion(price, self.days_since_price_changed()):
             self._promotion_active = True
             self._promotion_started_on = datetime.now()
 
-        self._price = price
+        self._reduced_price = price
+
         self._last_price_changed_on = datetime.now()
 
 
     def in_promotion(self):
-        self.check_promotion_is_over()
+        if self.has_promotion_expired():
+            self._promotion_active = False
 
         return self._promotion_active
 
 
-    def price_drop_ratio(self, old_price, new_price):
-        if old_price == 0:
-            return 1
-
-        return round(1 - (new_price / old_price), 2)
-
-
-    def check_promotion_is_over(self):
-        if not self._promotion_active:
+    def has_promotion_expired(self):
+        if not self._promotion_started_on:
             return False
 
         if (datetime.now() - self._promotion_started_on).days > 30:
-            self._promotion_active = False
+            return True
+
+        return False
+
+
+    def should_end_promotion(self, new_reduced_price, old_reduced_price):
+        if self.has_promotion_expired():
+            return True
+
+        if not self._promotion_active:
+            return False
+
+        if new_reduced_price > old_reduced_price:
+            return True
+
+        if new_reduced_price > self._original_price:
             return True
 
 
-    def should_start_promotion(self, old_price, new_price, days_last_changed):
-        if self.check_promotion_is_over():
-            return False
-
-        if new_price > old_price:
-            self._promotion_active = False
-            return False
-
+    def should_start_promotion(self, new_reduced_price, days_last_changed):
         if days_last_changed < 30:
             return False
 
-        price_drop_ratio = self.price_drop_ratio(old_price, new_price)
+        price_drop_ratio = 0
+
+        if self._original_price == 0:
+            price_drop_ratio = 1
+
+        price_drop_ratio = round(1 - (new_reduced_price / self._original_price), 2)
 
         if price_drop_ratio > 0.30:
             return False
