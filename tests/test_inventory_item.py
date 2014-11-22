@@ -30,6 +30,8 @@ class TestInventoryItem(unittest.TestCase):
         self.subject.set_reduced_price(25)
         self.subject._reduced_price.should.equal(25)
 
+
+
 class TestInventoryItemPriceChange(unittest.TestCase):
 
     def setUp(self):
@@ -44,6 +46,11 @@ class TestInventoryItemPriceChange(unittest.TestCase):
     def test_it_should_update_price_changed_when_price_is_set(self):
         self.subject.set_reduced_price(50)
         self.subject._last_price_changed_on.should_not.equal(self.last_price_changed_on)
+
+    def test_it_should_calculate_the_clearance_percentage(self):
+        self.subject.get_clearance_percentage(50).should.equal(0.5)
+        self.subject.get_clearance_percentage(44).should.equal(0.56)
+        self.subject.get_clearance_percentage(56).should.equal(0.44)
 
     def test_it_should_not_enter_promotion_when_price_drops_less_than_5_percent(self):
         self.subject.set_reduced_price(96)
@@ -116,5 +123,13 @@ class TestInventoryItemPriceChange(unittest.TestCase):
         self.subject.set_reduced_price(90)
         self.subject.in_promotion().should.be(True) #Sanity Check
         self.subject.set_reduced_price(95)
+        self.subject.in_promotion().should.be(False)
+
+    def test_it_should_end_the_promotion_if_the_reduced_price_drops_below_30_percent(self):
+        self.subject.set_reduced_price(95)
+        self.subject.in_promotion().should.be(True) #Santiy Check
+        self.subject.set_reduced_price(70)
+        self.subject.in_promotion().should.be(True) #Santiy Boundary Check
+        self.subject.set_reduced_price(69)
         self.subject.in_promotion().should.be(False)
 

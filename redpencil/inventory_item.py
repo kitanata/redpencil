@@ -48,6 +48,13 @@ class InventoryItem:
         return False
 
 
+    def get_clearance_percentage(self, reduced_price):
+        if self._original_price == 0:
+            return 1
+
+        return round(1 - (reduced_price / self._original_price), 2)
+
+
     def should_end_promotion(self, new_reduced_price, old_reduced_price):
         if self.has_promotion_expired():
             return True
@@ -61,22 +68,22 @@ class InventoryItem:
         if new_reduced_price > self._original_price:
             return True
 
+        if self.get_clearance_percentage(new_reduced_price) > 0.3:
+            return True
+
+        return False
+
 
     def should_start_promotion(self, new_reduced_price, days_last_changed):
         if days_last_changed < 30:
             return False
 
-        price_drop_ratio = 0
+        clearance_percentage = self.get_clearance_percentage(new_reduced_price)
 
-        if self._original_price == 0:
-            price_drop_ratio = 1
-
-        price_drop_ratio = round(1 - (new_reduced_price / self._original_price), 2)
-
-        if price_drop_ratio > 0.30:
+        if clearance_percentage > 0.30:
             return False
 
-        if price_drop_ratio >= 0.05:
+        if clearance_percentage >= 0.05:
             return True
 
         return False
