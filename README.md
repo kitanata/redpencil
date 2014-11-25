@@ -18,6 +18,7 @@ The scope of the Code Kata is the implementations of the rules for activation an
 * [X] 9. If the price if reduced during the red pencil promotion so that the overall reduction is more than 30% with regard to the original price, the promotion is ended immediately.
 * [X] 10. After a red pencil promotion is ended additional red pencil promotions may follow – as long as the start condition is valid: the price was stable for 30 days
 * [X] 11. ...and these 30 days don’t intersect with a previous red pencil promotion.
+* [] 12. I should be able to query the last 120 of price history.
 
 Installation
 ============

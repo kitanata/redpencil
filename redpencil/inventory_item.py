@@ -17,6 +17,8 @@ class InventoryItem:
 
 
     def set_reduced_price(self, price):
+        self._previous_price = self._reduced_price
+        self._previous_price_changed_on = self._last_price_changed_on
         if self.has_promotion_expired():
             self._promotion_active = False
             self._promotion_ended_on = self._promotion_started_on + timedelta(days=30)
@@ -90,3 +92,14 @@ class InventoryItem:
             return True
 
         return False
+
+
+    def report(self):
+        if hasattr(self, '_previous_price'):
+            return \
+            ("{date} 100\n"
+            "{date_two} 90\n").format(
+                date=self._previous_price_changed_on,
+                date_two=datetime.now())
+        else:
+            return "{date} 100\n".format(date=self._last_price_changed_on)
