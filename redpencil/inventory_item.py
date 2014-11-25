@@ -7,6 +7,7 @@ class InventoryItem:
         self._reduced_price = original_price
         self._promotion_active = False
         self._days_promotion_active = 0
+        self._price_history = []
 
         self._last_price_changed_on = last_price_changed_on
         self._promotion_started_on = None
@@ -15,10 +16,10 @@ class InventoryItem:
         if not self._last_price_changed_on: 
             self._last_price_changed_on = datetime.now()
 
+        self._set_price(original_price, self._last_price_changed_on)
+
 
     def set_reduced_price(self, price):
-        self._previous_price = self._reduced_price
-        self._previous_price_changed_on = self._last_price_changed_on
         if self.has_promotion_expired():
             self._promotion_active = False
             self._promotion_ended_on = self._promotion_started_on + timedelta(days=30)
@@ -29,9 +30,13 @@ class InventoryItem:
             self._promotion_active = True
             self._promotion_started_on = datetime.now()
 
-        self._reduced_price = price
+        self._set_price(price, datetime.now())
 
-        self._last_price_changed_on = datetime.now()
+
+    def _set_price(self, price, at_time):
+        self._price_history.append((price, at_time))
+        self._reduced_price = price
+        self._last_price_changed_on = at_time
 
 
     def in_promotion(self):
@@ -94,12 +99,11 @@ class InventoryItem:
         return False
 
 
+    def _format_report_line(self, line):
+        return "{date} {price}\n".format(price=line[0], date=line[1])
+
+
     def report(self):
-        if hasattr(self, '_previous_price'):
-            return \
-            ("{date} 100\n"
-            "{date_two} 90\n").format(
-                date=self._previous_price_changed_on,
-                date_two=datetime.now())
-        else:
-            return "{date} 100\n".format(date=self._last_price_changed_on)
+        history = ''.join([self._format_report_line(x) for x in self._price_history])
+        #history += self._format_report_line((self._reduced_price, self._last_price_changed_on))
+        return history
